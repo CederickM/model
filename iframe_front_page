@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>CodePen - CSS scroll animations exploration</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<style>
+
+@charset "UTF-8";
+@font-face {
+  font-family: "League Spartan";
+  font-style: normal italic;
+  font-weight: 100 900;
+  src: url("https://assets.codepen.io/1149983/LeagueSpartan-VariableFont_wght.ttf");
+}
+:root {
+  --red: #bd925c;
+  --blue: #5c92bd;
+  --white: rgb(244, 240, 238);
+  --black: rgba(0, 0, 0, 1);
+  --full-dimensions: 100%;
+  --h1-level: clamp(4rem, 3.4074rem + 2.963vw, 6rem);
+  --h2-level: clamp(3rem, 2.7143rem + 1.4286vw, 4.5rem);
+  --h3-level: clamp(2.25rem, 1.9643rem + 1.4286vw, 3.75rem);
+  --body-level: clamp(1.125rem, 1.0893rem + 0.1786vw, 1.3125rem);
+  --body-text: "League Spartan";
+  --heading-text: "Bebas Neue";
+  --system: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /*
+                Default sizes for progress bars
+                vertical height = horizontal width
+                */
+  --progress-dimensions: 0.75rem;
+  --scale-end: 1;
+  /*
+                default opacity value
+                iniviudal elements may override in 
+                their classes
+                */
+  --opacity-start: 0;
+  --opacity-end: 1;
+  /*
+                default zoom value
+                iniviudal elements may override in 
+                their classes
+                */
+  --zoom-out-start: 1;
+  --zoom-out-middle: 0.33;
+  --zoom-out--end: 0;
+  --zoom-in-start: 0;
+  --zoom-in-end: 1;
+  --rotate-start: (-25deg);
+  --rotate-end: (0deg);
+  /*
+                default flip-in values
+                iniviudal elements may override in 
+                their classes
+                */
+  --flip-in-start-perspective: 25rem;
+  --flip-in-middle-perspective: 25rem;
+  --flip-in-end-perspective: 25rem;
+  --flip-in-start-rotate: 90deg;
+  --flip-in-middle-rotate: -20deg;
+  --flip-in-end-rotate: 0deg;
+  /*
+                default flip-out values
+                iniviudal elements may override in 
+                their classes
+                */
+  --flip-out-start-perspective: 25rem;
+  --flip-out-middle-perspective: 25rem;
+  --flip-out-end-perspective: 25rem;
+  --flip-out-start-rotate: 0deg;
+  --flip-out-middle-rotate: -20deg;
+  --flip-out-end-rotate: 90deg;
+  /*
+                default light-speed-right values
+                iniviudal elements may override in 
+                their classes
+                */
+  --light-speed-in-right-start-translate: 100%;
+  --light-speed-in-right-start-skew: -30deg;
+  --light-speed-in-right-middle-skew: 20deg;
+  --light-speed-in-right-end-skew: -5deg;
+  /*
+                default heartbeat values
+                iniviudal elements may override in 
+                their classes
+                */
+  --heartbeat-rotate: 45deg;
+  --heartbeat-scale-start: 1;
+  --heartbeat-scale-middle: 1.2;
+  --heartbeat-scale-middle-end: 3;
+  --heartbeat-scale-end: 1;
+  --dots-position: 0rem 0rem, 0.25rem 0.25rem, 0rem 0rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+*::before, *::after {
+  box-sizing: border-box;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+::selection {
+  background-color: black;
+  color: var(--white);
+}
+
+body {
+  background-color: var(--black);
+  font-family: var(--body-text), var(--system);
+  font-variation-settings: "wght" 400;
+}
+
+main {
+  --opacity-start: 0;
+  --opacity-end: 1;
+  animation: opacity linear forwards;
+  animation-range: entry 296vh exit 301vh;
+  animation-timeline: scroll();
+  margin-top: 200vh;
+  max-width: 100vw;
+  opacity: var(--opacity-start);
+  position: relative;
+  width: var(--full-dimensions);
+  z-index: 2;
+}
+
+section {
+  background-color: var(--black);
+  min-height: 100vh;
+  position: relative;
+  width: var(--full-dimensions);
+}
+
+/* progress bars */
+.progress {
+  background-color: var(--color);
+  height: var(--progress-dimensions);
+  left: 0;
+  position: absolute;
+  width: var(--full-dimensions);
+  z-index: 2;
+}
+.progress.vertical {
+  height: var(--full-dimensions);
+  left: 0;
+  top: 0;
+  width: var(--progress-dimensions);
+}
+.progress + .vertical {
+  z-index: 1;
+}
+.progress.gradient {
+  background-image: linear-gradient(to right, var(--blue) 25%, var(--red) 25%, var(--red) 75%, var(--blue) 75%);
+}
+
+.year {
+  --rotate-start: 0;
+  --rotate-end: 90deg;
+  --scale-end: 5;
+  --opacity-end: 0;
+  animation: rubber-band linear forwards, rubber-band linear forwards, rubber-band linear forwards, rotate-scale linear forwards;
+  animation-range: entry 120vh exit 150vh, entry 170vh exit 210vh, entry 260vh exit 290vh, entry 275vh exit 295vh;
+  animation-timeline: scroll();
+  color: var(--white);
+  font-family: var(--body-text), var(--system);
+  font-variation-settings: "wght" 900;
+  margin-top: -5.25rem;
+  position: absolute;
+  text-shadow: 0.2813rem 0.2813rem 0 var(--red), 0.0625rem 0.0625rem 0 var(--black) 0.5625rem 0.5625rem 0 var(--blue);
+  z-index: 2;
+  -webkit-text-stroke: 0.1875rem var(--blue);
+  text-stroke: 0.1875rem var(--blue);
+  text-shadow: 0.1875rem 0 0 var(--red), -0.0625rem 0 0 var(--blue);
+}
+
+header {
+  --opacity-start: 1;
+  --opacity-end: 0;
+  --radial-color: var(--blue);
+  align-items: center;
+  animation: position-switch linear forwards;
+  animation-range: contain 295vh contain 300vh;
+  animation-timeline: scroll(root);
+  container: hero/inline-size;
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  transform-origin: center;
+  width: var(--full-dimensions);
+}
+header::before {
+  --opacity-start: 0.75;
+  --opacity-end: 0;
+  animation: opacity linear forwards;
+  animation-range: entry 280vh exit 290vh;
+  animation-timeline: scroll();
+  position: absolute;
+  top: 0;
+  width: 12.5rem;
+  height: 7.5rem;
+  content: "";
+  background-repeat: no-repeat;
+  z-index: 2;
+  left: 0;
+  filter: drop-shadow(0rem 0.0625rem 0rem var(--blue)) drop-shadow(0rem -0.0625rem 0rem var(--red));
+  mix-blend-mode: hard-light;
+  opacity: 0.75;
+}
+header::after {
+  --opacity-start: 0;
+  --opacity-end: 0;
+  animation: opacity linear forwards;
+  animation-range: contain 280vh contain 285vh;
+  animation-timeline: scroll();
+  background: radial-gradient(var(--radial-color) 33%, transparent 33%) 0rem 0rem/0.5rem 0.5rem, radial-gradient(var(--radial-color) 33%, transparent 33%) 0.25rem 0.25rem/0.5rem 0.5rem, 0rem 0rem/100% 100%;
+  background-position: var(--dots-position);
+  content: "";
+  height: 100vh;
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.2;
+  position: absolute;
+  width: 100vw;
+}
+header .progress {
+  --top-amount: 1.75rem;
+  --scale-end: 0.5;
+  animation: grow-progress linear forwards;
+  animation-range: entry 60vh cover 66vh;
+  animation-timeline: scroll();
+  filter: blur(0.0625rem) brightness(0.5);
+  mix-blend-mode: color-burn;
+  top: var(--top-amount);
+  transform: scaleX(0);
+}
+header .subtitle + .subtitle {
+  --margin-top-amount: 4rem;
+  margin-top: var(--margin-top-amount);
+  font-size: var(--h2-level);
+}
+header h1,
+header h2,
+header .year {
+  font-size: var(--h1-level);
+}
+header .word-container {
+  --padding: 0.75rem;
+  padding-left: var(--padding);
+}
+header h1 {
+  --opacity-start: 1;
+  --opacity-end: 0;
+  animation: flip-out-x linear forwards, opacity linear forwards;
+  animation-range: entry 120vh exit 130vh, entry 128vh cover 130vh;
+  animation-timeline: scroll();
+}
+header h1 .headline {
+  animation: opacity linear forwards;
+  animation-range: contain 0% contain 55vh;
+  animation-timeline: scroll();
+}
+header h1 .subtitle {
+  animation: reveal-to-top linear both;
+  animation-range: entry 50vh cover 60vh;
+  animation-timeline: scroll();
+  opacity: 0;
+}
+header h1 .subtitle + .subtitle {
+  animation: flip-in-x linear both;
+  animation-range: entry 75vh cover 80vh;
+  animation-timeline: scroll();
+  left: 0;
+  right: 0;
+}
+header h1 .word-container {
+  animation: flip-out-x linear forwards;
+  animation-range: entry 118vh cover 122vh;
+  animation-timeline: scroll();
+}
+header h1 .word-container .sniper {
+  --opacity-start: 0;
+  --opacity-end: 1;
+  animation: sniper linear forwards;
+  animation-range: entry 90vh cover 112vh;
+  animation-timeline: scroll();
+  display: inline-flex;
+  height: var(--full-dimensions);
+  justify-content: center;
+  left: 0;
+  width: var(--full-dimensions);
+}
+header h1 .word-container .progress {
+  --circle-d: 4rem;
+  --top-amount: calc(var(--padding) * -1);
+  border-radius: 50%;
+  height: var(--circle-d);
+  left: calc(var(--padding) / 2);
+  margin: 0 auto;
+  right: 0;
+  top: var(--top-amount);
+  width: var(--circle-d);
+}
+header h1 .word-container .progress:first-of-type {
+  align-items: center;
+  animation: zoom-in linear forwards, opacity linear forwards;
+  animation-range: entry 88vh cover 90vh, entry 88vh cover 90vh;
+  animation-timeline: scroll();
+  border: 0.125rem solid var(--white);
+  display: flex;
+  filter: drop-shadow(0rem 0rem 0.625rem rgba(0, 0, 0, 0.5));
+  justify-content: center;
+  opacity: 0;
+  padding: 0.125rem;
+}
+header h1 .word-container .progress:first-of-type::after, header h1 .word-container .progress:first-of-type::before {
+  background: var(--white);
+  border-radius: 0.375rem;
+  content: "";
+  display: block;
+  height: var(--full-dimensions);
+  position: absolute;
+  width: 0.0625rem;
+}
+header h1 .word-container .progress:first-of-type::after {
+  --rotate-deg: 90deg;
+  transform: rotate(var(--rotate-deg));
+}
+header h1 .word-container .progress:nth-of-type(2) {
+  --top-amount: calc(1.75 * var(--padding));
+  --dot-width: calc(var(--circle-d) / 8);
+  --dot-height: calc(var(--circle-d) / 8);
+  animation: heartbeat linear forwards;
+  animation-range: entry 115vh cover 120vh;
+  animation-timeline: scroll();
+  height: var(--dot-height);
+  mix-blend-mode: hard-light;
+  top: var(--top-amount);
+  width: var(--dot-width);
+}
+header h2 {
+  --top-amount: 4rem;
+  animation: flip-in-x linear forwards, flip-out-x linear forwards;
+  animation-range: entry 130vh cover 140vh, entry 170vh cover 190vh;
+  animation-timeline: scroll();
+  opacity: 0;
+}
+header h2:nth-of-type(2) {
+  animation-range: entry 195vh cover 230vh, entry 260vh cover 270vh;
+}
+header h2:nth-of-type(2) .subtitle {
+  animation-range: entry 210vh cover 220vh, entry 250vh cover 260vh;
+  animation-timeline: scroll();
+}
+header h2:nth-of-type(2) .subtitle > span {
+  animation: rotate-out-down-left linear forwards;
+  transform-origin: left bottom;
+  animation-range: entry 250vh cover 260vh;
+  animation-timeline: scroll();
+  opacity: 1;
+}
+header h2 .headline {
+  animation: flip-in-x linear forwards, zoom-out linear forwards;
+  animation-range: entry 130vh cover 135vh, entry 195vh, cover 200vh;
+  animation-timeline: scroll();
+}
+header h2 .headline + .subtitle {
+  margin-top: var(--top-amount);
+}
+header h2 .subtitle {
+  animation: flip-in-x linear both;
+  animation-range: entry 145vh cover 150vh;
+  animation-timeline: scroll();
+  font-size: var(--h2-level);
+}
+header h2 .subtitle > span {
+  animation: light-speed-in-right linear forwards;
+  animation-range: entry 150vh cover 170vh;
+  animation-timeline: scroll();
+  opacity: 0;
+}
+header ul {
+  --bright-start: 1;
+  --bright-end: 0.2;
+  animation: scale-header linear forwards, fadeOutBig linear forwards;
+  animation-range: entry 0vh cover 190vh, contain 250vh contain 299vh;
+  animation-timeline: scroll();
+  height: var(--full-dimensions);
+  inset: 0;
+  position: absolute;
+  width: var(--full-dimensions);
+}
+header ul::before, header ul::after {
+  content: "";
+  height: 100vh;
+  inset: 0;
+  position: absolute;
+}
+header ul::before {
+  background-image: radial-gradient(circle at center, var(--red) 0%, var(--red) 20%, var(--blue) 20%, var(--black) 100%);
+  mix-blend-mode: multiply;
+  transition: color 300ms ease;
+  z-index: 1;
+}
+header ul li {
+  --bright-start: 1;
+  --bright-end: 0.2;
+  height: var(--full-dimensions);
+  inset: 0;
+  position: absolute;
+  width: var(--full-dimensions);
+  z-index: -1;
+}
+header ul li:nth-of-type(1) {
+  --opacity-start: 1;
+  --opacity-end: 0;
+  animation: brightness linear forwards, opacity linear forwards;
+  animation-range: entry 1vh exit 135vh, entry 210vh exit 250vh;
+  animation-timeline: scroll();
+}
+header ul li:nth-of-type(2) {
+  mix-blend-mode: saturation;
+  z-index: 0;
+}
+header ul li:nth-of-type(2) img {
+  animation: reveal linear both;
+  animation-range: entry 170vh cover 210vh;
+  animation-timeline: scroll();
+}
+header ul img {
+  filter: grayscale(1);
+  height: var(--full-dimensions);
+  transform-origin: center;
+  width: var(--full-dimensions);
+}
+
+@container hero (min-width: 48rem) {
+  header ul::before {
+    background-image: radial-gradient(circle at center, var(--red) 0%, var(--red) 40%, var(--blue) 40%, var(--black) 50%, var(--black) 50%, var(--black) 60%, var(--black) 100%);
+  }
+  header .headline + .subtitle + .subtitle {
+    --margin-top-amount: 5rem;
+  }
+  header .progress {
+    --top-amount: 2.5rem;
+  }
+  header h1 .subtitle + .subtitle .progress {
+    --top-amount: calc(var(--padding) / 2);
+  }
+  header h1 .subtitle + .subtitle .progress:nth-of-type(2) {
+    --top-amount: 50%;
+  }
+  header h2 {
+    --top-amount: 5rem;
+  }
+}
+h1,
+h2 {
+  color: var(--white);
+  display: flex;
+  flex-flow: column wrap;
+  width: var(--full-dimensions);
+  z-index: 1;
+}
+h1:has(.subtitle),
+h2:has(.subtitle) {
+  align-items: center;
+  position: absolute;
+  text-align: center;
+  text-wrap: balance;
+}
+h1 span,
+h2 span {
+  position: absolute;
+}
+h1 .headline,
+h2 .headline {
+  max-width: 80%;
+  z-index: 1;
+}
+
+h2 {
+  font-size: var(--h3-level);
+}
+
+figure {
+  display: flex;
+  flex-flow: column wrap;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: var(--full-dimensions);
+}
+figure figcaption {
+  font-size: var(--body-level);
+}
+
+.headline,
+.subtitle {
+  font-family: var(--heading-text), var(--system);
+}
+
+/* horizontal scrolling pieces */
+.horizontal-section {
+  --list-width: var(--full-dimensions);
+  animation: reveal-to-top reverse linear forwards;
+  animation-range: contain 97% contain 99%;
+  animation-timeline: --section-hor-scroll;
+  container: horizontal-scroller/inline-size;
+  height: calc(var(--list-width) * var(--gallery-items));
+  overflow: visible;
+  /* To make position sticky work … */
+  view-timeline-name: --section-hor-scroll;
+}
+.horizontal-section h2 span {
+  color: var(--color);
+  font-weight: 900;
+}
+.horizontal-section ul {
+  display: flex;
+}
+.horizontal-section ul li {
+  --filter-color: var(--blue);
+  --radial-color: var(--blue);
+  align-items: flex-end;
+  display: flex;
+  position: relative;
+  width: var(--list-width);
+}
+.horizontal-section ul figure::after {
+  content: attr(data-topic);
+  font-family: var(--heading-text), var(--system);
+  font-size: var(--h3-level);
+  right: 0;
+  padding: 0 0.75rem;
+  position: absolute;
+  top: 0;
+  width: fit-content;
+  color: var(--white);
+  transform: translateY(-2.5rem);
+}
+.horizontal-section ul figure img {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  position: relative;
+  width: var(--full-dimensions);
+}
+.horizontal-section ul figure figcaption {
+  --radial-color: var(--blue);
+  --padding: 0.75rem;
+  backdrop-filter: blur(0.625rem);
+  background: var(--fig-color);
+  color: var(--white);
+  margin: 0 auto;
+  padding: var(--padding) calc(var(--padding) * 2);
+  position: relative;
+  width: 80%;
+}
+.horizontal-section ul figure figcaption span {
+  background-color: var(--blue);
+  box-decoration-break: clone;
+  font-variation-settings: "wght" 650;
+  line-height: 1.15;
+  padding: calc(var(--padding) / 4);
+}
+.horizontal-section ul figure figcaption::after {
+  background: radial-gradient(var(--radial-color) 33%, transparent 33%) 0rem 0rem/0.5rem 0.5rem, radial-gradient(var(--radial-color) 33%, transparent 33%) 0.25rem 0.25rem/0.5rem 0.5rem, 0rem 0rem/100% 100%;
+  background-position: var(--dots-position);
+  content: "";
+  height: var(--full-dimensions);
+  inset: 0;
+  mix-blend-mode: multiply;
+  opacity: 0.15;
+  position: absolute;
+  width: var(--full-dimensions);
+  z-index: -1;
+}
+.horizontal-section ul figure[style*="--fig-color: var(--white)"] figcaption {
+  color: var(--black);
+}
+.horizontal-section ul figure[style*="--fig-color: var(--white)"] figcaption::after {
+  mix-blend-mode: normal;
+}
+.horizontal-section ul figure[style*="--fig-color: var(--white)"] figcaption span {
+  background-color: var(--red);
+  color: var(--white);
+}
+.horizontal-section ul figure[style*="--fig-color: var(--blue)"] {
+  --radial-color: var(--red);
+}
+.horizontal-section ul figure[style*="--fig-color: var(--blue)"] span {
+  background-color: var(--red);
+}
+
+.horizontal-section-wrapper {
+  height: 100vh;
+  overflow-x: hidden;
+  position: sticky;
+  top: 0;
+}
+.horizontal-section-wrapper:has(.horizontal-section-fixed) {
+  display: grid;
+  grid-template-columns: 100vw;
+}
+.horizontal-section-wrapper:has(.horizontal-section-fixed) .horizontal-scroll-container {
+  --move-amount: 100vw;
+}
+
+.horizontal-section-fixed {
+  background: var(--black);
+  position: relative;
+  grid-column: 1;
+  z-index: 2;
+}
+.horizontal-section-fixed h2 {
+  --opacity-start: 1;
+  --opacity-end: 0;
+  animation: opacity linear forwards;
+  animation-timeline: --section-hor-scroll;
+  height: var(--full-dimensions);
+  justify-content: center;
+  padding-left: 0.75rem;
+  view-timeline-axis: block;
+}
+.horizontal-section-fixed h2 > .subtitle {
+  animation: reveal-to-bottom linear forwards;
+  animation-timeline: --section-hor-scroll;
+  opacity: 0;
+  position: relative;
+  width: var(--full-dimensions);
+}
+.horizontal-section-fixed h2 > .subtitle > span {
+  position: relative;
+}
+.horizontal-section-fixed h2:nth-of-type(1) {
+  animation-range: contain 40% contain 41%;
+}
+.horizontal-section-fixed h2:nth-of-type(1) > span {
+  animation-range: contain 0% contain 2%;
+}
+.horizontal-section-fixed h2:nth-of-type(1) > span:nth-of-type(2) {
+  animation-range: contain 16% contain 17%;
+}
+.horizontal-section-fixed h2:nth-of-type(1) > span:nth-of-type(3) {
+  animation-range: contain 24% contain 25%;
+}
+.horizontal-section-fixed h2:nth-of-type(1) > span:nth-of-type(4) {
+  animation-range: contain 33% contain 34%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) {
+  animation-range: contain 74% contain 75%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span {
+  animation-range: contain 41% contain 42%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span:nth-of-type(2) {
+  animation-range: contain 46% contain 48%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span:nth-of-type(3) {
+  animation-range: contain 54% contain 56%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span:nth-of-type(4) {
+  animation-range: contain 62% contain 64%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span:nth-of-type(5) {
+  animation-range: contain 70% contain 72%;
+}
+.horizontal-section-fixed h2:nth-of-type(2) > span:nth-of-type(6) {
+  animation-range: contain 76% contain 78%;
+}
+.horizontal-section-fixed h2:nth-of-type(3) {
+  --opacity-end: 1;
+}
+.horizontal-section-fixed h2:nth-of-type(3) > span {
+  animation-range: contain 74% contain 75%;
+}
+.horizontal-section-fixed h2:nth-of-type(3) > span:nth-of-type(2) {
+  animation-range: contain 81% contain 82%;
+}
+.horizontal-section-fixed h2:nth-of-type(3) > span:nth-of-type(3) {
+  animation-range: contain 88% contain 89%;
+}
+.horizontal-section-fixed h2:nth-of-type(3) > span:nth-of-type(4) {
+  animation-range: contain 96% contain 98%;
+}
+.horizontal-section-fixed h2:nth-of-type(3) > span:nth-of-type(5) {
+  animation-range: contain 97% contain 99%;
+}
+.horizontal-section-fixed .progress {
+  animation: opacity linear forwards, grow-progress linear forwards;
+  animation-range: entry 0% cover 50%, entry 0% cover 90%;
+  animation-timeline: --section-hor-scroll;
+  transform: scaleX(calc(1 / var(--gallery-items)));
+}
+.horizontal-section-fixed .progress:nth-of-type(1) {
+  top: 0;
+}
+.horizontal-section-fixed .progress:nth-of-type(2) {
+  bottom: 0;
+}
+.horizontal-section-fixed .progress.vertical {
+  animation-range: entry 0% cover 50%, entry 0% cover 90%;
+  transform: scaleY(calc(1 / var(--gallery-items)));
+}
+
+.horizontal-scroll-container {
+  --move-amount: 100vw;
+  align-items: center;
+  animation: linear move forwards;
+  animation-range: contain 10% contain 90%;
+  animation-timeline: --section-hor-scroll;
+  display: grid;
+  width: calc(100vw * var(--gallery-items) + 25vw);
+  will-change: transform;
+}
+.horizontal-scroll-container ul li {
+  --opacity-start: 1;
+  --opacity-end: 0.25;
+  --rotate-start: 12deg;
+  --rotate-end: 0deg;
+  animation: linear gallery-images forwards, opacity linear forwards;
+  animation-timeline: --section-hor-scroll;
+  view-timeline-axis: block;
+}
+.horizontal-scroll-container ul li:first-of-type {
+  --rotate-start: 0deg;
+  animation-range: entry 12% cover 15%, contain 14% contain 15%;
+}
+.horizontal-scroll-container ul li:nth-of-type(2) {
+  animation-range: entry 20% cover 22%, contain 23% contain 24%;
+}
+.horizontal-scroll-container ul li:nth-of-type(3) {
+  animation-range: entry 26% cover 28%, contain 31% contain 32%;
+}
+.horizontal-scroll-container ul li:nth-of-type(4) {
+  animation-range: entry 32% cover 34%, contain 39% contain 40%;
+}
+.horizontal-scroll-container ul li:nth-of-type(5) {
+  animation-range: entry 38% cover 40%, contain 47% contain 48%;
+}
+.horizontal-scroll-container ul li:nth-of-type(6) {
+  animation-range: entry 44% cover 46%, contain 55% contain 56%;
+}
+.horizontal-scroll-container ul li:nth-of-type(7) {
+  animation-range: entry 50% cover 52%, contain 64% contain 65%;
+}
+.horizontal-scroll-container ul li:nth-of-type(8) {
+  animation-range: entry 56% cover 58%, contain 73% contain 74%;
+}
+.horizontal-scroll-container ul li:nth-of-type(9) {
+  animation-range: entry 62% cover 64%, contain 81% contain 82%;
+}
+.horizontal-scroll-container ul li:nth-of-type(10) {
+  animation-range: entry 68% cover 70%, contain 89% contain 90%;
+}
+.horizontal-scroll-container ul li:nth-of-type(11) {
+  --bright-start: 1;
+  --bright-end: 1;
+  animation-range: entry 74% cover 76%, contain 98% contain 99%;
+}
+
+@media (min-width: 48rem) {
+  .horizontal-section {
+    --list-width: 50vw;
+  }
+}
+@container horizontal-scroller (min-width: 48rem) {
+  .horizontal-section-wrapper:has(.horizontal-section-fixed) {
+    grid-template-columns: 25vw 1fr;
+  }
+  .horizontal-section-wrapper:has(.horizontal-section-fixed) .horizontal-scroll-container {
+    --move-amount: 75vw;
+  }
+
+  .horizontal-scroll-container {
+    align-self: center;
+    width: fit-content;
+  }
+  .horizontal-scroll-container ul figure figcaption {
+    margin: 0 0 0 auto;
+    width: 50%;
+  }
+
+  figcaption {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+.timeline {
+  align-items: center;
+  background-image: url("https://assets.codepen.io/1149983/nixjfk.png");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-blend-mode: hard-light;
+  background-size: contain;
+  display: grid;
+  grid-auto-flow: column dense;
+  height: 100vh;
+  justify-content: center;
+  height: 100vh;
+  overflow: scroll;
+  width: var(--full-dimensions);
+  container: timeline/inline-size;
+}
+.timeline h2 {
+  --top-amount: 4.5rem;
+  font-size: var(--h1-level);
+}
+.timeline h2 .headline {
+  --opacity-start: 1;
+  --opacity-end: 0;
+  animation: flip-out-x linear forwards, opacity linear forwards;
+  animation-range: entry 120vh exit 130vh, entry 128vh cover 130vh;
+  animation-timeline: scroll();
+}
+.timeline h2 .subtitle {
+  margin-top: var(--top-amount);
+}
+.timeline h2 .subtitle + .subtitle {
+  --top-amount: 9rem;
+}
+.timeline div {
+  padding-top: 200vh;
+}
+
+@media screen and (min-width: 48rem) {
+  .timeline {
+    background-size: cover;
+    background-position: right bottom;
+  }
+}
+@keyframes fadeOutBig {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  60% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2);
+    z-index: -1;
+  }
+}
+@keyframes scale-header {
+  20% {
+    transform: scale(2);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes reveal-to-bottom {
+  0% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity: 1;
+  }
+}
+@keyframes reveal-to-top {
+  0% {
+    clip-path: polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%);
+  }
+  100% {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+    opacity: 1;
+  }
+}
+@keyframes reveal {
+  from {
+    clip-path: inset(45% 20% 45% 20%);
+  }
+  to {
+    clip-path: inset(0% 0% 0% 0%);
+    opacity: 1;
+  }
+}
+@keyframes hide-me {
+  to {
+    clip: rect(0, 0, 0, 0);
+  }
+}
+@keyframes rotate-out-down-left {
+  0% {
+    opacity: 1;
+    transform: rotate(0);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(45deg);
+  }
+}
+@keyframes {
+  from {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(20%, -2rem);
+  }
+  40% {
+    transform: translate(-35%, 0.75rem);
+  }
+  60% {
+    transform: translate(10%, 1.875rem);
+  }
+  80% {
+    transform: translate(30%, -1.875rem);
+  }
+  100% {
+    transform: translate(-8%, 1%);
+  }
+}
+@keyframes rubber-band {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  50% {
+    transform: scale3d(1.15, 0.85, 1);
+  }
+  65% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  75% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}
+@keyframes opacity {
+  from {
+    opacity: var(--opacity-start);
+  }
+  to {
+    opacity: var(--opacity-end);
+  }
+}
+@keyframes heartbeat {
+  0%, 25% {
+    transform: rotate(var(--heartbeat-rotate)) scale(var(--heartbeat-scale-start));
+  }
+  30%, 50% {
+    transform: rotate(var(--heartbeat-rotate)) scale(var(--heartbeat-scale-middle));
+  }
+  70% {
+    transform: rotate(var(--heartbeat-rotate)) scale(var(--heartbeat-scale-middle-end));
+  }
+  100% {
+    transform: rotate(var(--heartbeat-rotate)) scale(var(--heartbeat-scale-end));
+  }
+}
+@keyframes rotate-scale {
+  0% {
+    rotate: var(--rotate-start);
+  }
+  100% {
+    opacity: var(--opacity-end);
+    rotate: var(--rotate-end);
+    scale: var(--scale-end);
+  }
+}
+@keyframes zoom-out {
+  0% {
+    transform: scale(var(--zoom-out-start));
+  }
+  50% {
+    opacity: var(--opacity-end);
+    transform: scale(var(--zoom-out-middle));
+  }
+  100% {
+    opacity: var(--opacity-end);
+    transform: scale(var(--zoom-out-end));
+  }
+}
+@keyframes grow-progress {
+  to {
+    transform: scaleX(var(--scale-end));
+  }
+}
+@keyframes position-switch {
+  to {
+    position: relative;
+  }
+}
+@keyframes border {
+  to {
+    outline: 30px solid red;
+  }
+}
+@keyframes move {
+  to {
+    transform: translateX(calc(-100% + var(--move-amount)));
+  }
+}
+@keyframes brightness {
+  from {
+    filter: brightness(var(--bright-start));
+  }
+  to {
+    filter: brightness(var(--bright-end));
+  }
+}
+@keyframes zoom-in {
+  from {
+    transform: scale(var(--zoom-in-start));
+  }
+  to {
+    transform: scale(var(--zoom-in-end));
+  }
+}
+@keyframes gallery-images {
+  from {
+    transform: rotate(var(--rotate-start)) scale(var(--zoom-in-start));
+  }
+  to {
+    transform: rotate(var(--rotate-end)) scale(var(--zoom-in-end));
+  }
+}
+@keyframes flip-out-x {
+  0% {
+    transform: perspective(var(--flip-out-start-perspective)) rotateX(var(--flip-out-start-rotate));
+  }
+  30% {
+    transform: perspective(var(--flip-out-middle-perspective)) rotateX(var(--flip-out-middle-rotate));
+  }
+  100% {
+    transform: perspective(var(--flip-out-end-perspective)) rotateX(var(--flip-out-end-rotate));
+  }
+}
+@keyframes flip-in-x {
+  0% {
+    opacity: 0;
+    transform: perspective(var(--flip-in-start-perspective)) rotateX(var(--flip-in-start-rotate));
+  }
+  50% {
+    transform: perspective(var(--flip-in-middle-perspective)) rotateX(var(--flip-in-middle-rotate));
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(var(--flip-in-end-perspective)) rotateX(var(--flip-in-end-rotate));
+  }
+}
+@keyframes light-speed-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--light-speed-in-right-start-translate), 0, 0) skewX(var(--light-speed-in-right-start-skew));
+  }
+  60% {
+    opacity: 1;
+    transform: skewX(var(--light-speed-in-right-middle-skew));
+  }
+  80% {
+    transform: skewX(var(--light-speed-in-right-end-skew));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+</style>
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<header>
+  <ul>
+    <li>
+      <img src="https://res.cloudinary.com/tokeet/image/upload/v1703277168/webready/9f3f6894-5d54-482f-a93e-e44181b3c7fa.jpg" alt="Villa1" />
+    </li>
+
+    <li>
+      <img src="https://res.cloudinary.com/tokeet/image/upload/v1703277168/webready/8b4f6f47-dd75-4ff1-ac2d-d145f6cca316.jpg" alt="Villa2" />
+    </li>
+  </ul>
+
+  <span class="year">ESTABLISHED 2022</span>
+  <h1>
+    <span class="headline"> OnTheSpot </span>
+    <span class="subtitle">
+      A Revolutionized Way of Travelling
+      <div class="progress gradient" aria-hidden="true"></div>
+    </span>
+    <span class="subtitle"> Where We Give You Back The
+      <span class="word-container">
+        Power
+        <span class="sniper">
+          <div class="progress" style="--color: var(--gray)" aria-hidden="true"></div>
+          <div class="progress" style="--color: var(--red)" aria-hidden="true"></div>
+        </span>
+      </span>
+    </span>
+  </h1>
+
+  <h2>
+    <span class="headline"> Booking villa, activities, and restaurants </span>
+    <span class="subtitle">in one <span class="word-container">click</span> </span>
+  </h2>
+  <h2>
+    <span class="headline">As the present now</span>
+    <span class="subtitle"> Will later be <span class="word-container">past</span></span>
+  </h2>
+</header>
+
+<main>
+
+  <section class="horizontal-section" style="--gallery-items: 12">
+
+    <div class="horizontal-section-wrapper">
+      <div class="horizontal-section-fixed">
+        <div class="progress" style="--color: var(--red)" aria-hidden="true"></div>
+        <div class="progress" style="--color: var(--blue)" aria-hidden="true"></div>
+        <div class="progress vertical" style="--color: var(--white)" aria-hidden="true"></div>
+
+        <h2>
+          <span class="subtitle">Luxury
+            <span style="--color: var(--red)">villas</span>
+          </span>
+          <span class="subtitle">All-inclusive
+            <span style="--color: var(--blue)">experiences</span></span>
+          <span class="subtitle">
+            Pre-selected
+            <span style="--color: var(--blue)">activities</span>
+          </span>
+          <span class="subtitle">Most visited
+            <span style="--color: var(--red)">restaurants</span>
+          </span>
+        </h2>
+        <h2>
+          <span class="subtitle ">Unique <span style="--color: var(--blue)">transportation </span></span>
+          <span class="subtitle">All in one <span style="--color: var(--red)">click </span></span>
+          <span class="subtitle "> And there's no tellin' who that it's <span style="--color: var(--red)">namin'</span></span>
+          <span class="subtitle "> For the <span style="--color: var(--blue)">loser</span> now Will be later to <span style="--color: var(--blue)">win</span></span>
+        </h2>
+        <h2>
+          <span class="subtitle">The battle outside ragin' Will soon</span>
+          <span class="subtitle ">shake your windows And rattle your walls</span>
+          <span class="subtitle ">For the times they are a-changin</span>
+        </h2>
+
+      </div>
+      <div class="horizontal-scroll-container">
+        <ul clas="horizontal-scroll-gallery">
+          <li>
+            <figure style=" --fig-color: var(--red)" data-topic="Luxury Villas">
+              <img src="https://img.usewebready.com/images/if_ih_gt_4000,c_scale,h_4000/q_auto,f_auto/v1687760379/webready/c2aca3b5-d2f0-4f81-8b4f-e18f712f0cf5/1686238241.2259:7c22215a-e8aa-424b-8aab-10a4de1b4936.jpg" alt="Martin Luther King Jr. - A Beacon of Peaceful Change" />
+              <figcaption><span>Selected Villas:</span> At OnTheSpot, we make sure to offer you the best villas available to make your trip at the anticipated height </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--white)" data-topic="Packages">
+              <img src="https://res.cloudinary.com/tokeet/image/upload/v1703280539/webready/1071761f-90de-4962-ab8c-7e84ae2b5343.jpg" alt="Montgomery Bus Boycott - Defying Segregation" />
+              <figcaption><span>Experiences:</span> You can choose any of our four packages so you can later select activities, restaurants, and transportation services. Don't worry, it is all intuitive and worry-free. We think your time is precious and we made all the hard work so you can enjoy real vacation. </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--blue)" data-topic="Activities">
+              <img src="https://res.cloudinary.com/tokeet/image/upload/v1703280655/webready/8b0d6532-1ff1-4936-b496-149a50759b8b.jpg" alt="Rosa Parks - An Unyielding Stand" />
+              <figcaption><span>Activities:</span> Unique activities selected for each location. We have a broad spectrum of activities that you will be able to select to make your dream vacation like nobody could have. </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--red)" data-topic="Restaurants">
+              <img src="https://res.cloudinary.com/tokeet/image/upload/v1703280814/webready/96579bec-2878-4aeb-b15d-faebcdaed4bb.jpg" alt="Elizabeth Eckford - Trailblazing Courage" />
+              <figcaption><span>Food:</span> We can offer pre-paid restaurant reservation in the most wanted restaurants in the world or offer chef services directly in your selected villa. </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--white)" data-topic="Transportation services">
+              <img src="https://res.cloudinary.com/tokeet/image/upload/v1703280815/webready/3bb39e71-6ac6-40bc-b39d-8025cc03a411.jpg" alt="Dwight D. Eisenhower - Eisenhower's Prescient Warning" />
+              <figcaption><span>Getting from point A to B:</span> We offer to transport you with our preffered partners around the location by ground, air, or water, whatever fits you the better. </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--red)" data-topic="One click experience">
+              <img src="https://res.cloudinary.com/tokeet/image/upload/v1703300846/webready/ac53c752-0166-443b-a63f-8b20ffb13915.jpg" alt="The rise of the MIT: Military Industrial Complex" />
+              <figcaption><span>Easy:</span> Our goal is to offer the simplest experience on the market to book a customized vacation. It is effecient for you while giving you all our knowledge of the location we offer. No more secret in the travel market is our ultimate goal. </figcaption>
+            </figure>
+          </li>
+
+          <li>
+            <figure style="--fig-color: var(--white)" data-topic="Cold War">
+              <img src="https://assets.codepen.io/1149983/superbomb-korean-war-loc.jpg__1000x724_q85_crop_subsampling-2.jpg" alt="Provactive image of two young Koreans standing infront of a tank" />
+              <figcaption><span>Generational Scars:</span> A Legacy of Suffering. Across generations, the Korean War's deep wounds persist. Families torn apart, dreams shattered, and lives forever changed. Its echoes remind us of the enduring cost of conflict.</figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--blue)" data-topic="Cold War">
+              <img src="https://assets.codepen.io/1149983/koreaWar.jpeg" alt="Korean War protests were on the rise across the USA" />
+              <figcaption><span>Campaigning for Peace:</span> Korean War Protests in the U.S. Women's solidarity against war echoes through history. Their activism sparks discussions, advocating for a peaceful world. Protests pave the path to change.</figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--red)" data-topic="Space Race">
+              <img src="https://assets.codepen.io/1149983/28.08.1946_Labour_Party_North_Korea.jpg" alt="Stalin meeting Kim Il Sung the founder of North Korea as we know it" />
+              <figcaption><span>Cold War Summit:</span> North Korea's Encounter with Stalin. An iconic moment in Cold War history as leaders converged. The meeting's consequences rippled through time, influencing geopolitics for decades </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--blue)" data-topic="Space Race">
+              <img src="https://assets.codepen.io/1149983/corbis-vv6016.webp" alt="Khrushchev, Mao, and Ho Chi Minh in Beijing Celebrating 10 Years of the People's Republic of China" />
+              <figcaption><span>Communist Leaders Unite:</span> Khrushchev, Mao, and Ho Chi Minh in Beijing Celebrating 10 Years of the People's Republic of China. A historic gathering that bolstered the worldwide communist movement. </figcaption>
+            </figure>
+          </li>
+          <li>
+            <figure style="--fig-color: var(--white)" data-topic="Space Race">
+              <img src="https://assets.codepen.io/1149983/fidel-castro-cuba.webp" alt="Cosmic Rivalry - East vs West in the Stars" />
+              <figcaption><span>Cuba's Transformation:</span> Fidel Castro's overthrow marked Cuba's shift. Socialist regime introduced political change, prompting discussions on governance. This event resonates globally. </figcaption>
+            </figure>
+          </li>
+        </ul>
+
+      </div>
+    </div>
+
+  </section>
+  
+  <!-- more to come -->
+</main>
+<!-- partial -->
+  
+</body>
+</html>
